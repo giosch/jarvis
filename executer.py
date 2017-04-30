@@ -1,23 +1,37 @@
-import spotify.spotify as spotLib
+import plugins.spotify as spotLib
+import plugins.volumeManager as volumeManager
 
 class Executer:
     def __init__(self):
-        spotify = spotLib.Spotify()
+        self.spotify = spotLib.Spotify()
+        self.volManager = volumeManager.VolumeManagerLubuntu()
         self.commands = [{'words':['porno','immagini'],'action':self.magic},
                         #{'words':[],'action':},
-                        {'words':['prossima','canzone'],'action':spotify.next},
-                        {'words':['salta','canzone'],'action':spotify.next},
-                        {'words':['cambia','canzone'],'action':spotify.next},
-                        {'words':['precedente','canzone'],'action':spotify.previous},
-                        {'words':['prima','canzone'],'action':spotify.previous},
-                        {'words':['metti','quella','prima'],'action':spotify.previous},
-                        {'words':['rimetti','quella','prima'],'action':spotify.previous},
-                        {'words':['ferma','musica'],'action':spotify.stop},
-                        {'words':['ferma','canzone'],'action':spotify.stop},
-                        {'words':['stop','musica'],'action':spotify.stop},
-                        {'words':['stop','canzone'],'action':spotify.stop},
-                        {'words':['metti','musica'],'action':spotify.play},
-                        {'words':['partire','musica'],'action':spotify.play}]
+                        {'words':['prossima','canzone'],'action':self.spotify.next},
+                        {'words':['salta','canzone'],'action':self.spotify.next},
+                        {'words':['cambia','canzone'],'action':self.spotify.next},
+                        {'words':['precedente','canzone'],'action':self.spotify.previous},
+                        {'words':['prima','canzone'],'action':self.spotify.previous},
+                        {'words':['metti','quella','prima'],'action':self.spotify.previous},
+                        {'words':['rimetti','quella','prima'],'action':self.spotify.previous},
+                        {'words':['ferma','musica'],'action':self.spotify.stop},
+                        {'words':['ferma','canzone'],'action':self.spotify.stop},
+                        {'words':['stop','musica'],'action':self.spotify.stop},
+                        {'words':['stop','spotify'],'action':self.spotify.stop},
+                        {'words':['stop','canzone'],'action':self.spotify.stop},
+                        {'words':['metti','pausa','musica'],'action':self.spotify.pause},
+                        {'words':['metti','pausa','spotify'],'action':self.spotify.pause},
+                        {'words':['metti','musica'],'action':self.spotify.play},
+                        {'words':['partire','musica'],'action':self.spotify.play},
+
+                        {'words':['abbassa','volume'],'action':self.volManager.down},
+                        {'words':['alza','volume'],'action':self.volManager.up},
+                        {'words':['muta','musica'],'action':self.volManager.mute},
+                        {'words':['muta','volume'],'action':self.volManager.mute},
+                        {'words':['metti','muto'],'action':self.volManager.mute},
+                        {'words':['rialza','musica'],'action':self.volManager.unmute},
+                        {'words':['rialza','volume'],'action':self.volManager.unmute},
+                        {'words':['togli','muto'],'action':self.volManager.unmute}]
     def do(self,s):
         #s = s.split(' ') #if active need to eliminate the \n at the end
         matches = []

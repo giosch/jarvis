@@ -151,7 +151,7 @@ class SpeechDetector:
                 print "DETECTED: ", r
 
                 # Removes temp audio file
-                os.remove(filename)
+                #os.remove(filename)
                 # Reset all
                 started = False
                 slid_win = deque(maxlen=self.SILENCE_LIMIT * rel)
