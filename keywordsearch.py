@@ -24,13 +24,13 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000
 #finally is in DB!!!
-THRESHOLD = 55
+THRESHOLD =60 
 #number of frame over the THRESHOLD to define the command started
 FRAME_TO_START = 10
 FRAME_TO_STOP = 3
-ACTIVATION_TOKEN = 'jarvis bitch'
+ACTIVATION_TOKEN = 'wake up jarvis'
 # TOKEN_THRESHOLD = '1e-35' # for silence
-TOKEN_THRESHOLD = 1e-37
+TOKEN_THRESHOLD = 1e-30
 
 modeldir = "model"
 datadir = "test/data"
@@ -95,7 +95,7 @@ def recordUntilSilence(silenceSeconds = 1,maxSeconds = 5,prevSeconds = 1.5):
             if len(slid_win)>=1 :
                 plog("Current chunk volume : "
                      + str(slid_win[-1]) +
-                     " silence" if slid_win[-1]<THRESHOLD else " someone speaking")
+                     (" silence" if slid_win[-1]<THRESHOLD else " someone speaking"))
 
         if sum([x > THRESHOLD for x in slid_win]) >= FRAME_TO_START:
             if started == False:

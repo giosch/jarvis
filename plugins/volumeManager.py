@@ -10,7 +10,7 @@ class VolumeManagerLubuntu:
         self.prevVol = self.get()
         #maybe get current vol
         return
-        
+
 
         """
         Simple mixer control 'Master',0
@@ -43,12 +43,12 @@ NEED TO PARSE THIS TO GET CURRENT
     #
     def unmute(self):
         #need to save on self.volume the current to unmute
-        
+
         if (self.get()==0) and self.muted:
             self.muted = False
             self.up(self.prevVol)
         return self.prevVol
-    
+
     def get(self):
         res = subprocess.check_output(['amixer','-D','pulse','sset','Master','0%+'])
         m = re.search('\[(.+)%\]', res)
