@@ -1,0 +1,3 @@
+[submodule "VikyScript"]
+	path = VikyScript
+	url = https://github.com/empijei/VikyScript.git
