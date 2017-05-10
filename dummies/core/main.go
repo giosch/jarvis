@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/tls"
 	"io"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -25,6 +26,8 @@ func main() {
 func listenForSensors() {
 	HelloSensor := func(w http.ResponseWriter, req *http.Request) {
 		io.WriteString(w, serverMessage)
+		data, _ := ioutil.ReadAll(req.Body)
+		println(string(data))
 	}
 	http.HandleFunc("/", HelloSensor)
 	err := http.ListenAndServeTLS(":8443", "server.pem", "server.key", nil)
