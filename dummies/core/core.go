@@ -34,7 +34,8 @@ func main() {
 	tlsConfig.BuildNameToCertificate()
 
 	go listenForSensors(tlsConfig)
-	listenForActuators(tlsConfig)
+	go listenForActuators(tlsConfig)
+	listenForActuators(nil)
 }
 
 func appendCertFromFile(path string, caCertPool *x509.CertPool) {
@@ -74,10 +75,20 @@ func listenForActuators(tlsConfig *tls.Config) {
 		go io.Copy(conn, os.Stdin)
 		io.Copy(os.Stdout, conn)
 	}
-	ln, err := tls.Listen("tcp", ":1337", tlsConfig)
-	if err != nil {
-		log.Println(err)
-		return
+	var ln net.Listener
+	var err error
+	if tlsConfig != nil {
+		ln, err = tls.Listen("tcp", ":1337", tlsConfig)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+	} else {
+		ln, err = net.Listen("tcp", ":1338")
+		if err != nil {
+			log.Println(err)
+			return
+		}
 	}
 	defer ln.Close()
 
