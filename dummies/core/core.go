@@ -3,11 +3,8 @@ package main
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"io"
 	"io/ioutil"
 	"log"
-	"net"
-	"net/http"
 	"os"
 )
 
@@ -20,84 +17,30 @@ const serverMessage = `Welcome to jarvis dummy interface`
 
 func main() {
 	log.SetFlags(log.Lshortfile)
-	certPools := x509.NewCertPool()
-	appendCertFromFile("../actuator/public.pem", certPools)
-	appendCertFromFile("../sensor/public.pem", certPools)
-
-	serverCert, _ := tls.LoadX509KeyPair("public.pem", "private.pem")
-
-	tlsConfig := &tls.Config{
-		ClientCAs:    certPools,
-		ClientAuth:   tls.RequireAndVerifyClientCert,
-		Certificates: []tls.Certificate{serverCert},
-	}
-	tlsConfig.BuildNameToCertificate()
-
+	tlsConfig := loadCerts("./trustedCerts")
 	go listenForSensors(tlsConfig)
 	go listenForActuators(tlsConfig)
 	listenForActuators(nil)
 }
 
-func appendCertFromFile(path string, caCertPool *x509.CertPool) {
-	caCert, err := ioutil.ReadFile(path)
-	if err != nil {
-		log.Fatal(err)
+func loadCerts(path string) *tls.Config {
+	certsPool := x509.NewCertPool()
+	files, _ := ioutil.ReadDir(path)
+	for _, f := range files {
+		filePath := path + string(os.PathSeparator) + f.Name()
+		log.Println("Loading certs for: " + filePath)
+		cert, _ := ioutil.ReadFile(filePath)
+		certsPool.AppendCertsFromPEM(cert)
 	}
-	caCertPool.AppendCertsFromPEM(caCert)
+	log.Printf("Loaded %d certs.\n", len(certsPool.Subjects()))
 
-}
+	serverCert, _ := tls.LoadX509KeyPair("public.pem", "private.pem")
 
-func listenForSensors(tlsConfig *tls.Config) {
-	HelloSensor := func(w http.ResponseWriter, req *http.Request) {
-		io.WriteString(w, serverMessage)
-		data, _ := ioutil.ReadAll(req.Body)
-		println(string(data))
+	tlsConfig := &tls.Config{
+		ClientCAs:    certsPool,
+		ClientAuth:   tls.RequireAndVerifyClientCert,
+		Certificates: []tls.Certificate{serverCert},
 	}
-
-	http.HandleFunc("/", HelloSensor)
-
-	server := &http.Server{
-		Addr:      ":8443",
-		TLSConfig: tlsConfig,
-	}
-
-	server.ListenAndServeTLS("public.pem", "private.pem") //private cert
-}
-
-func listenForActuators(tlsConfig *tls.Config) {
-	handleConnection := func(conn net.Conn) {
-		defer conn.Close()
-		n, err := conn.Write([]byte(serverMessage))
-		if err != nil {
-			log.Println(n, err)
-			return
-		}
-		go io.Copy(conn, os.Stdin)
-		io.Copy(os.Stdout, conn)
-	}
-	var ln net.Listener
-	var err error
-	if tlsConfig != nil {
-		ln, err = tls.Listen("tcp", ":1337", tlsConfig)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-	} else {
-		ln, err = net.Listen("tcp", ":1338")
-		if err != nil {
-			log.Println(err)
-			return
-		}
-	}
-	defer ln.Close()
-
-	for {
-		conn, err := ln.Accept()
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		go handleConnection(conn)
-	}
+	tlsConfig.BuildNameToCertificate()
+	return tlsConfig
 }
