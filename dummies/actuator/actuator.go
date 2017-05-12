@@ -43,6 +43,6 @@ func main() {
 	}
 	defer conn.Close()
 
-	go io.Copy(conn, os.Stdin)
-	io.Copy(os.Stdout, conn)
+	go io.Copy(os.Stdout, conn)
+	io.Copy(conn, os.Stdin)
 }
