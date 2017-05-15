@@ -39,6 +39,7 @@ func handleSensors(w http.ResponseWriter, req *http.Request) {
 	} else {
 		text = string(msg.Message)
 	}
+	log.Println("Testo ricevuto",text)
 	//TODO define metadata type and function
 	var metadata string
 	_, err = w.Write(handleText(msg.Destination, text, metadata))

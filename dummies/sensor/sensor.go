@@ -8,8 +8,17 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
+	"bytes"
+	"bufio"
+	"encoding/json"
+	"fmt"
 )
+
+type SensorMessage struct {
+	Destination string
+	IsAudio     bool
+	Message     []byte
+}
 
 func main() {
 
@@ -37,10 +46,16 @@ func main() {
 	tlsConfig.BuildNameToCertificate()
 	transport := &http.Transport{TLSClientConfig: tlsConfig}
 	client := &http.Client{Transport: transport}
-
-	resp, err := client.Post("https://localhost:8443/command", "application/json", strings.NewReader(`{"key":"value"}`))
-	if err != nil {
-		log.Fatal(err)
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		input := scanner.Text()
+		toSend := SensorMessage{"dummyActuator",false,[]byte(input)}
+		jsonGenerated,_ := json.Marshal(toSend)
+		resp, err := client.Post("https://localhost:8443/command", "application/json", bytes.NewReader(jsonGenerated))
+		if err != nil {
+			log.Fatal(err)
+		}
+		io.Copy(os.Stdout, resp.Body)
+		fmt.Println("")
 	}
-	io.Copy(os.Stdout, resp.Body)
 }
