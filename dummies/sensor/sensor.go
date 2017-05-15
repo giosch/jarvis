@@ -38,7 +38,7 @@ func main() {
 	transport := &http.Transport{TLSClientConfig: tlsConfig}
 	client := &http.Client{Transport: transport}
 
-	resp, err := client.Post("https://localhost:8443/", "application/json", strings.NewReader(`{"key":"value"}`))
+	resp, err := client.Post("https://localhost:8443/command", "application/json", strings.NewReader(`{"key":"value"}`))
 	if err != nil {
 		log.Fatal(err)
 	}
