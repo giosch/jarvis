@@ -49,7 +49,7 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		input := scanner.Text()
-		toSend := SensorMessage{"dummyActuator",false,[]byte(input)}
+		toSend := SensorMessage{"dummyname",false,[]byte(input)}
 		jsonGenerated,_ := json.Marshal(toSend)
 		resp, err := client.Post("https://localhost:8443/command", "application/json", bytes.NewReader(jsonGenerated))
 		if err != nil {
