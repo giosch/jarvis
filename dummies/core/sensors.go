@@ -55,7 +55,7 @@ func handleText(target, text, metadata string) []byte {
 
 	//TODO check if the response requires to repeat the job and keep looping
 	//for keeplooping || err == nil{
-	response, err := actuators.Send(target, &ActuatorMessage{})
+	response, err := actuators.Send(target, &ActuatorMessage{metadata,text,""})
 	if err != nil {
 		return []byte("TODO this is a temporary error message: " + err.Error())
 	}
