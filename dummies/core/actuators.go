@@ -131,7 +131,7 @@ func (ac *Actuator) Send(msg *ActuatorMessage) (*ActuatorMessage, error) {
 	//If it can handle timeouts, let's use them
 	setDeadline(ac.conn)
 	var err error
-	err = ac.enc.Encode(*msg)
+	err = ac.enc.Encode(msg)
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +157,7 @@ func handleActuator(conn net.Conn) {
 	if err != nil {
 		return
 	}
-	actuators.Add(Actuator{name: name, conn: conn})
+	actuators.Add(*NewActuator(name,conn))
 }
 
 func authenticateActuator(conn *net.Conn) (string, error) {
