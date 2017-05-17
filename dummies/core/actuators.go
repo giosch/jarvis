@@ -83,7 +83,7 @@ func (ap *ActuatorPool) Send(target string, msg *ActuatorMessage) (*ActuatorMess
 	wg.Add(len(acts))
 	for _, act := range acts {
 		//Parameter is passed to avoid races
-		go func(act Actuator,msg *ActuatorMessage) {
+		go func(act Actuator, msg *ActuatorMessage) {
 			res, e := act.Send(msg)
 			if e != nil {
 				res = &ActuatorMessage{ErrorMessage: e.Error()}
@@ -91,7 +91,7 @@ func (ap *ActuatorPool) Send(target string, msg *ActuatorMessage) (*ActuatorMess
 			}
 			results <- res
 			wg.Done()
-		}(act,msg)
+		}(act, msg)
 	}
 	//Wait for all comms to complete
 	wg.Wait()
@@ -157,7 +157,7 @@ func handleActuator(conn net.Conn) {
 	if err != nil {
 		return
 	}
-	actuators.Add(*NewActuator(name,conn))
+	actuators.Add(*NewActuator(name, conn))
 }
 
 func authenticateActuator(conn *net.Conn) (string, error) {
