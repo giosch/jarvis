@@ -48,7 +48,6 @@ func handleSensors(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-//lol
 //TODO define what exactly is metadata, a string seems pretty dull...
 func handleText(target, text, metadata string) []byte {
 	//TODO invoke vikyscript
