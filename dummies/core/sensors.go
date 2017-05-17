@@ -39,7 +39,7 @@ func handleSensors(w http.ResponseWriter, req *http.Request) {
 	} else {
 		text = string(msg.Message)
 	}
-	log.Println("Testo ricevuto",text)
+	log.Println("Testo ricevuto", text)
 	//TODO define metadata type and function
 	var metadata string
 	_, err = w.Write(handleText(msg.Destination, text, metadata))
@@ -48,6 +48,7 @@ func handleSensors(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+//lol
 //TODO define what exactly is metadata, a string seems pretty dull...
 func handleText(target, text, metadata string) []byte {
 	//TODO invoke vikyscript
@@ -55,7 +56,7 @@ func handleText(target, text, metadata string) []byte {
 
 	//TODO check if the response requires to repeat the job and keep looping
 	//for keeplooping || err == nil{
-	response, err := actuators.Send(target, &ActuatorMessage{metadata,text,""})
+	response, err := actuators.Send(target, &ActuatorMessage{metadata, text, ""})
 	if err != nil {
 		return []byte("TODO this is a temporary error message: " + err.Error())
 	}
