@@ -86,6 +86,7 @@ func (ap *ActuatorPool) Send(target string, msg *ActuatorMessage) (*ActuatorMess
 		go func(act Actuator) {
 			res, e := act.Send(msg)
 			if e != nil {
+				log.Printf("Send to act returned erro %v\n", e)
 				res = &ActuatorMessage{ErrorMessage: e.Error()}
 				delete(ap.actuators[act.name], act.id)
 			}
@@ -147,12 +148,14 @@ func handleActuator(conn net.Conn) {
 	//defer func() { _ = conn.Close() }() //perche` dp c'era questa riga??
 
 	//If it can handle timeouts, let's use them
-	setDeadline(conn)
-	n, err := conn.Write([]byte(serverMessage))
-	if err != nil {
-		log.Println(n, err)
-		return
-	}
+	/*
+		setDeadline(conn)
+		n, err := conn.Write([]byte(serverMessage))
+		if err != nil {
+			log.Println(n, err)
+			return
+		}
+	*/
 	name, err := authenticateActuator(&conn)
 	if err != nil {
 		return
