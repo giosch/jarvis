@@ -83,7 +83,7 @@ func (ap *ActuatorPool) Send(target string, msg *ActuatorMessage) (*ActuatorMess
 	wg.Add(len(acts))
 	for _, act := range acts {
 		//Parameter is passed to avoid races
-		go func(act Actuator, msg *ActuatorMessage) {
+		go func(act Actuator) {
 			res, e := act.Send(msg)
 			if e != nil {
 				res = &ActuatorMessage{ErrorMessage: e.Error()}
@@ -91,7 +91,7 @@ func (ap *ActuatorPool) Send(target string, msg *ActuatorMessage) (*ActuatorMess
 			}
 			results <- res
 			wg.Done()
-		}(act, msg)
+		}(act)
 	}
 	//Wait for all comms to complete
 	wg.Wait()
@@ -144,7 +144,7 @@ func (ac *Actuator) Send(msg *ActuatorMessage) (*ActuatorMessage, error) {
 
 func handleActuator(conn net.Conn) {
 	//This is meant as a reminder that we are ignoring an error
-	defer func() { _ = conn.Close() }()
+	//defer func() { _ = conn.Close() }() //perche` dp c'era questa riga??
 
 	//If it can handle timeouts, let's use them
 	setDeadline(conn)
