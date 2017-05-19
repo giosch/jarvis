@@ -23,13 +23,16 @@ func googleSpeechToText(data []byte) string {
 	resp, err := client.Recognize(ctx, &speechpb.RecognizeRequest{
 		Config: &speechpb.RecognitionConfig{
 			Encoding:        speechpb.RecognitionConfig_LINEAR16,
-			SampleRateHertz: 16000,
+			SampleRateHertz: 8000,
 			LanguageCode:    "it",
 		},
 		Audio: &speechpb.RecognitionAudio{
 			AudioSource: &speechpb.RecognitionAudio_Content{Content: data},
 		},
 	})
+	if err != nil {
+		log.Fatalf("Failed to recognize: %v", err)
+	}
 	if (len(resp.Results) > 0) && (len(resp.Results[0].Alternatives) > 0) {
 		return resp.Results[0].Alternatives[0].Transcript
 	}
