@@ -65,6 +65,7 @@ func handleText(target, text, metadata string) []byte {
 }
 
 func speechToText(buf []byte) string {
-	//TODO
-	return ""
+	text := googleSpeechToText(buf)
+	log.Println(text)
+	return text
 }
