@@ -59,13 +59,15 @@ func main() {
 	in := json.NewDecoder(conn)
 	out := json.NewEncoder(conn)
 	for {
-		var msg *ActuatorMessage
+		var msg ActuatorMessage
 		var err error
-		err = in.Decode(msg)
+		err = in.Decode(&msg)
 		if err != nil {
 			log.Println(err)
 			return
 		}
+		log.Printf("Received %v\n", msg)
+		log.Println("Responding not implemented yet")
 		err = out.Encode(&ActuatorMessage{"", "", "Functionality not implemented yet"})
 		if err != nil {
 			log.Println(err)
