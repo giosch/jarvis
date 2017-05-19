@@ -34,8 +34,9 @@ func googleSpeechToText(data []byte) string {
 	if err != nil {
 		log.Fatalf("Failed to recognize: %v", err)
 	}
-	if (len(resp.Results) > 0) && (len(resp.Results[0].Alternatives) > 0) {
-		return resp.Results[0].Alternatives[0].Transcript
+	if len(resp.Results) > 0 {
+		var err error
+		return getResult(resp, err)
 	}
 	return ""
 }
