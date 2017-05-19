@@ -20,6 +20,7 @@ func googleSpeechToText(data []byte) string {
 	}
 
 	// Detects speech in the audio file.
+	//TODO, recognize Rate and Encoding!!!!
 	resp, err := client.Recognize(ctx, &speechpb.RecognizeRequest{
 		Config: &speechpb.RecognitionConfig{
 			Encoding:        speechpb.RecognitionConfig_LINEAR16,
