@@ -5,7 +5,15 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	vikyscript "github.com/empijei/VikyScript/dummy"
 )
+
+func init() {
+	//FIXME this are just dummies
+	_, _, _ = vikyscript.Parse("ping:ping (?P<actuator>[a-z]+)")
+	_, _, _ = vikyscript.Parse("conncheck:controlla se è connesso l'attuatore (?P<actuator>[a-z]+)")
+}
 
 type SensorMessage struct {
 	Destination string
@@ -50,8 +58,13 @@ func handleSensors(w http.ResponseWriter, req *http.Request) {
 
 //TODO define what exactly is metadata, a string seems pretty dull...
 func handleText(target, text, metadata string) []byte {
-	//TODO invoke vikyscript
-	//TODO take vikyscript command output
+	cmd, params, err := vikyscript.Match(text)
+	//TODO hm...... e ora? 🤔
+	if err != nil {
+		log.Println(err)
+		return []byte(err.Error())
+	}
+	log.Printf("Command recognized: %s with parameters %#v\n", cmd, params)
 
 	//TODO check if the response requires to repeat the job and keep looping
 	//for keeplooping || err == nil{
